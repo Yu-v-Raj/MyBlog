@@ -1,0 +1,73 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<!-- POST SECTION -->
+<div class="post-card">
+    <h2>{{ post.title }}</h2>
+
+    <small>
+        By {{ post.author.username }} |
+        {{ post.created_at|date:"M d, Y" }}
+    </small>
+
+    <hr>
+
+    <p style="margin-top:15px;">
+        {{ post.content }}
+    </p>
+
+    <!-- AUTHOR CONTROLS -->
+    {% if request.user == post.author %}
+        <div style="margin-top:20px;">
+            <a href="{% url 'edit_post' post.slug %}">
+                <button>Edit</button>
+            </a>
+
+            <a href="{% url 'delete_post' post.slug %}">
+                <button style="background:#dc2626;">Delete</button>
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<hr>
+
+<!-- COMMENTS SECTION -->
+<h3>Comments</h3>
+
+{% for comment in post.comments.all %}
+    <div class="post-card">
+        <strong>{{ comment.author.username }}</strong>
+        <small>
+            {{ comment.created_at|date:"M d, Y H:i" }}
+        </small>
+
+        <p style="margin-top:8px;">
+            {{ comment.content }}
+        </p>
+
+        <!-- COMMENT DELETE (Author Only) -->
+        {% if comment.author == request.user %}
+            <a href="{% url 'delete_comment' post.slug comment.id %}">
+                <button style="background:#dc2626;">Delete</button>
+            </a>
+        {% endif %}
+    </div>
+{% empty %}
+    <p>No comments yet.</p>
+{% endfor %}
+
+<!-- ADD COMMENT FORM -->
+{% if user.is_authenticated %}
+    <hr>
+    <h4>Add Comment</h4>
+
+    <form method="POST" action="{% url 'add_comment' post.slug %}">
+        {% csrf_token %}
+        <textarea name="content" rows="3" required></textarea>
+        <button type="submit">Post Comment</button>
+    </form>
+{% endif %}
+
+{% endblock %}

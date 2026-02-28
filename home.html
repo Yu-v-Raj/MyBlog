@@ -1,0 +1,75 @@
+{% extends "blog/base.html" %}
+
+{% block content %}
+
+<style>
+    .page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 25px;
+    }
+
+    .blog-card {
+        padding: 20px;
+        margin-bottom: 25px;
+        border-radius: 12px;
+        background-color: #ffffff;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: 0.2s ease;
+    }
+
+    .blog-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .blog-title {
+        font-size: 20px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #2563eb;
+    }
+
+    .blog-title:hover {
+        color: #1e40af;
+    }
+
+    .blog-meta {
+        font-size: 13px;
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    .blog-content {
+        margin-top: 12px;
+        color: #374151;
+        line-height: 1.5;
+    }
+</style>
+
+<h2 class="page-title">All Posts</h2>
+
+{% for post in posts %}
+    <div class="blog-card">
+
+        <a href="{% url 'post_detail' post.slug %}" class="blog-title">
+            {{ post.title }}
+        </a>
+
+        <div class="blog-meta">
+            By {{ post.author.username }} |
+            {{ post.created_at|date:"M d, Y" }}
+        </div>
+
+        <div class="blog-content">
+            {{ post.content|truncatewords:20 }}
+        </div>
+
+    </div>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
+
+{% endblock %}
